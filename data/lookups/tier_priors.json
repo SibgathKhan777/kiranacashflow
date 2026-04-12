@@ -1,0 +1,33 @@
+{
+  "metro": {
+    "ticket_size_median": 120,
+    "ticket_size_std": 60,
+    "daily_footfall_base": 180,
+    "rent_per_sqft_month": 90,
+    "description": "Top 8 metros. High footfall, high ticket, high rent."
+  },
+  "tier1": {
+    "ticket_size_median": 90,
+    "ticket_size_std": 45,
+    "daily_footfall_base": 140,
+    "rent_per_sqft_month": 55
+  },
+  "tier2": {
+    "ticket_size_median": 70,
+    "ticket_size_std": 35,
+    "daily_footfall_base": 110,
+    "rent_per_sqft_month": 35
+  },
+  "tier3": {
+    "ticket_size_median": 55,
+    "ticket_size_std": 25,
+    "daily_footfall_base": 80,
+    "rent_per_sqft_month": 20
+  },
+  "rural": {
+    "ticket_size_median": 40,
+    "ticket_size_std": 20,
+    "daily_footfall_base": 55,
+    "rent_per_sqft_month": 10
+  }
+}

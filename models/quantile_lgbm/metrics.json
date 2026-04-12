@@ -1,0 +1,29 @@
+{
+  "coverage_80": 0.6525,
+  "target_coverage": 0.8,
+  "mae": 2155.0,
+  "mean_relative_band_width": 0.5814,
+  "test_size": 400,
+  "train_size": 1600,
+  "feature_importance": {
+    "sdi": 309,
+    "sku_diversity": 234,
+    "inventory_value": 307,
+    "refill_signal": 307,
+    "store_size_sqft": 316,
+    "pos_sophistication": 284,
+    "coverage_score": 31,
+    "extraction_confidence": 275,
+    "geo_demand_score": 212,
+    "competition_density": 301,
+    "residential_ratio": 278,
+    "poi_footfall_score": 302,
+    "catchment_population_1km": 209,
+    "structural_daily": 371,
+    "demand_daily": 280,
+    "supply_daily": 211,
+    "tier": 22,
+    "shop_type": 22,
+    "road_class": 22
+  }
+}

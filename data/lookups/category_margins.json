@@ -1,0 +1,44 @@
+{
+  "staples": {
+    "margin_low": 0.04,
+    "margin_high": 0.08,
+    "turnover_days": 20,
+    "description": "Rice, atta, dal, oil, sugar. Low margin, high volume."
+  },
+  "fmcg_packaged": {
+    "margin_low": 0.08,
+    "margin_high": 0.14,
+    "turnover_days": 25,
+    "description": "Biscuits, noodles, chips, soap, detergent."
+  },
+  "personal_care": {
+    "margin_low": 0.12,
+    "margin_high": 0.20,
+    "turnover_days": 35,
+    "description": "Shampoo sachets, toothpaste, creams."
+  },
+  "tobacco_paan": {
+    "margin_low": 0.15,
+    "margin_high": 0.25,
+    "turnover_days": 7,
+    "description": "Cigarettes, gutka, paan masala. High margin, fast-moving."
+  },
+  "beverages": {
+    "margin_low": 0.10,
+    "margin_high": 0.18,
+    "turnover_days": 15,
+    "description": "Colas, juices, water bottles."
+  },
+  "dairy": {
+    "margin_low": 0.06,
+    "margin_high": 0.10,
+    "turnover_days": 3,
+    "description": "Milk, curd, butter. Very fast-moving."
+  },
+  "loose_goods": {
+    "margin_low": 0.15,
+    "margin_high": 0.30,
+    "turnover_days": 30,
+    "description": "Loose grains, dry fruits, namkeen by weight."
+  }
+}
