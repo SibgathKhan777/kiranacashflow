@@ -83,8 +83,8 @@ class CashFlowEstimate(BaseModel):
     daily_sales_range: list[float]
     monthly_revenue_range: list[float]
     monthly_income_range: list[float]
-    structural_point_estimate: float  # pre-calibration best guess
-    model_point_estimate: float       # post-calibration (stubbed in Phase 1)
+    structural_point_estimate: float  # pre-calibration best guess (demand ⊕ supply blend)
+    model_point_estimate: float       # LightGBM q50 calibrated estimate
     prior_disagreement: float          # 0..1, 0 = perfect agreement
 
 

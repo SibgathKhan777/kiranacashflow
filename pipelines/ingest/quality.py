@@ -1,11 +1,11 @@
 """Image ingestion + quality assessment.
 
-This stage is deliberately real even in Phase 1 — garbage input detection is
-one of the most important defensive layers. Nothing here requires a neural
-network: PIL + numpy is enough for blur, brightness, resolution, duplication.
+Garbage input detection is one of the most important defensive layers.
+Nothing here requires a neural network: PIL + numpy is enough for blur,
+brightness, resolution, and duplication checks.
 
-Role tagging is currently heuristic (aspect ratio + brightness + hash bucket).
-Phase 2 will replace `_guess_role` with a small CLIP-based classifier.
+Role tagging uses the enhanced spatial-zone classifier from
+pipelines.vision.classifiers (edge profiles, color histograms, sky detection).
 """
 from __future__ import annotations
 
@@ -63,29 +63,6 @@ def _laplacian_variance(gray: np.ndarray) -> float:
     )
     return float(out.var())
 
-
-def _guess_role(pil: Image.Image, array: np.ndarray, brightness: float) -> str:
-    """Heuristic role router. Phase 2 swaps this for CLIP zero-shot.
-
-    Rules-of-thumb used here:
-      - Very tall portraits of shelves -> interior_shelf
-      - Horizontal wide outdoor-ish (sky pixels) -> exterior
-      - Low brightness + high color variance -> street_stall
-      - Otherwise counter / unknown
-    """
-    h, w = array.shape[:2]
-    aspect = w / max(h, 1)
-    # "sky" = top 20% rows with high brightness + blue-ish
-    top = array[: h // 5]
-    top_bright = top.mean()
-    top_blueish = top[..., 2].mean() - top[..., 0].mean()
-    if top_bright > 150 and top_blueish > 10:
-        return "exterior"
-    if aspect < 0.85:       # portrait
-        return "interior_shelf"
-    if brightness < 70:
-        return "street_stall"
-    return "counter"
 
 
 def _load(filename: str, raw: bytes) -> ImageRecord:
