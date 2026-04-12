@@ -1,10 +1,12 @@
-"""Visual feature extractor — Phase 2b.
+"""Visual feature extractor — Phase 3.
 
-Combines real image analysis (edge profiles, color histograms, spatial zones,
-brand/POS detection) with economic priors. No GPU dependencies.
+Combines real image analysis with the new inventory estimation module:
+  - Grid-based product region detection
+  - HSV color → category matching → price band lookup
+  - Visibility-corrected total inventory value
+  - Fast-moving vs slow-moving turnover mix
 
-Phase 3 will add SAM for shelf segmentation, Grounding DINO for SKU detection,
-MiDaS for depth, and PaddleOCR for price tags. The interface remains the same.
+No GPU dependencies.
 """
 from __future__ import annotations
 
@@ -15,6 +17,7 @@ import numpy as np
 from api.schemas import VisionFeatures
 from pipelines.ingest import ImageRecord
 from pipelines.vision.classifiers import classify_shop_type, detect_pos_signals
+from pipelines.vision.inventory import estimate_inventory
 
 
 DEFAULT_CATEGORY_MIX = {
@@ -196,10 +199,34 @@ def extract_vision_features(records: list[ImageRecord]) -> VisionFeatures:
     ]
 
     sdi = _estimate_sdi(interior)
-    sku_div, category_mix = _estimate_sku_diversity(stats, shop_type)
-    inventory = _estimate_inventory_value(sdi, stats, shop_type)
     refill = _estimate_refill_signal(interior)
     store_size = _estimate_store_size(usable, sdi)
+
+    # Real inventory estimation: product detection + price band mapping.
+    inv_est = estimate_inventory(
+        arrays=[r.array for r in usable],
+        roles=[r.report.role for r in usable],
+        store_size_sqft=store_size,
+    )
+    inventory = inv_est.estimated_total_value
+
+    # Derive category mix from detected product breakdown.
+    if inv_est.category_breakdown and sum(inv_est.category_breakdown.values()) > 0:
+        total_detected = sum(inv_est.category_breakdown.values())
+        category_mix = {
+            cat: round(val / total_detected, 4)
+            for cat, val in inv_est.category_breakdown.items()
+        }
+        # Ensure all categories present (fill missing with small weight).
+        for cat in DEFAULT_CATEGORY_MIX:
+            if cat not in category_mix:
+                category_mix[cat] = 0.01
+        # Renormalize.
+        total = sum(category_mix.values())
+        category_mix = {k: round(v / total, 4) for k, v in category_mix.items()}
+        sku_div = min(len(inv_est.category_breakdown) / 7.0 + 0.1, 0.98)
+    else:
+        sku_div, category_mix = _estimate_sku_diversity(stats, shop_type)
 
     # POS sophistication from brand/QR detection across all images.
     pos_detections = [detect_pos_signals(r.array) for r in usable]
@@ -225,6 +252,12 @@ def extract_vision_features(records: list[ImageRecord]) -> VisionFeatures:
         shelf_density_index=round(sdi, 3),
         sku_diversity=round(sku_div, 3),
         inventory_value_est=round(inventory, 0),
+        inventory_visible_value=round(inv_est.visible_value, 0),
+        inventory_cells_detected=inv_est.cell_count,
+        inventory_detection_confidence=round(inv_est.detection_confidence, 3),
+        fast_moving_fraction=round(inv_est.fast_moving_fraction, 3),
+        slow_moving_fraction=round(inv_est.slow_moving_fraction, 3),
+        avg_inventory_turnover_days=round(inv_est.avg_turnover_days, 1),
         refill_signal=round(refill, 3),
         store_size_sqft=round(store_size, 1),
         pos_sophistication=round(pos_soph, 3),

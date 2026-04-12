@@ -1,0 +1,83 @@
+{
+  "_comment": "Price bands for common kirana SKUs. avg_price = typical shelf price in INR. avg_units_per_shelf_face = how many units visible per facing. color_signature = dominant HSV ranges for detection.",
+  "categories": {
+    "staples": {
+      "items": {
+        "atta_1kg":         {"avg_price": 55,  "avg_units_per_face": 6, "pack_color": "white_cream", "turnover_days": 18},
+        "atta_5kg":         {"avg_price": 250, "avg_units_per_face": 3, "pack_color": "white_cream", "turnover_days": 20},
+        "rice_1kg":         {"avg_price": 60,  "avg_units_per_face": 6, "pack_color": "white_cream", "turnover_days": 22},
+        "rice_5kg":         {"avg_price": 290, "avg_units_per_face": 3, "pack_color": "white_cream", "turnover_days": 22},
+        "dal_500g":         {"avg_price": 75,  "avg_units_per_face": 6, "pack_color": "yellow_brown", "turnover_days": 25},
+        "cooking_oil_1L":   {"avg_price": 140, "avg_units_per_face": 4, "pack_color": "yellow_gold",  "turnover_days": 15},
+        "sugar_1kg":        {"avg_price": 45,  "avg_units_per_face": 6, "pack_color": "white_cream",  "turnover_days": 20},
+        "salt_1kg":         {"avg_price": 20,  "avg_units_per_face": 8, "pack_color": "white_blue",   "turnover_days": 30}
+      },
+      "avg_price_band": [20, 290],
+      "typical_shelf_value": 2500
+    },
+    "fmcg_packaged": {
+      "items": {
+        "biscuits_parle_g": {"avg_price": 10,  "avg_units_per_face": 20, "pack_color": "yellow_red",   "turnover_days": 10},
+        "biscuits_marie":   {"avg_price": 30,  "avg_units_per_face": 12, "pack_color": "yellow_brown", "turnover_days": 14},
+        "chips_lays":       {"avg_price": 20,  "avg_units_per_face": 15, "pack_color": "multi_bright",  "turnover_days": 8},
+        "chips_kurkure":    {"avg_price": 20,  "avg_units_per_face": 15, "pack_color": "orange_red",    "turnover_days": 7},
+        "noodles_maggi":    {"avg_price": 14,  "avg_units_per_face": 20, "pack_color": "yellow_red",    "turnover_days": 12},
+        "detergent_surf":   {"avg_price": 45,  "avg_units_per_face": 8,  "pack_color": "blue_white",    "turnover_days": 30},
+        "soap_lifebuoy":    {"avg_price": 45,  "avg_units_per_face": 10, "pack_color": "red_white",     "turnover_days": 25},
+        "tea_100g":         {"avg_price": 55,  "avg_units_per_face": 8,  "pack_color": "red_brown",     "turnover_days": 20}
+      },
+      "avg_price_band": [10, 55],
+      "typical_shelf_value": 1800
+    },
+    "personal_care": {
+      "items": {
+        "shampoo_sachet":   {"avg_price": 3,   "avg_units_per_face": 40, "pack_color": "multi_bright",  "turnover_days": 5},
+        "toothpaste_50g":   {"avg_price": 35,  "avg_units_per_face": 10, "pack_color": "white_blue",    "turnover_days": 28},
+        "fairness_cream":   {"avg_price": 60,  "avg_units_per_face": 8,  "pack_color": "pink_white",    "turnover_days": 35},
+        "hair_oil_50ml":    {"avg_price": 45,  "avg_units_per_face": 10, "pack_color": "yellow_green",  "turnover_days": 40},
+        "deo_spray":        {"avg_price": 110, "avg_units_per_face": 6,  "pack_color": "black_silver",  "turnover_days": 45}
+      },
+      "avg_price_band": [3, 110],
+      "typical_shelf_value": 1200
+    },
+    "tobacco_paan": {
+      "items": {
+        "cigarette_single": {"avg_price": 14,  "avg_units_per_face": 50, "pack_color": "white_red",     "turnover_days": 1},
+        "gutka_sachet":     {"avg_price": 5,   "avg_units_per_face": 80, "pack_color": "multi_bright",  "turnover_days": 2},
+        "paan_masala":      {"avg_price": 2,   "avg_units_per_face": 100,"pack_color": "green_silver",  "turnover_days": 2},
+        "beedi_bundle":     {"avg_price": 25,  "avg_units_per_face": 20, "pack_color": "brown_red",     "turnover_days": 3}
+      },
+      "avg_price_band": [2, 25],
+      "typical_shelf_value": 800
+    },
+    "beverages": {
+      "items": {
+        "cola_600ml":       {"avg_price": 40,  "avg_units_per_face": 8,  "pack_color": "red_black",     "turnover_days": 5},
+        "water_1L":         {"avg_price": 20,  "avg_units_per_face": 12, "pack_color": "blue_clear",    "turnover_days": 3},
+        "juice_200ml":      {"avg_price": 20,  "avg_units_per_face": 15, "pack_color": "orange_yellow", "turnover_days": 10},
+        "energy_drink":     {"avg_price": 110, "avg_units_per_face": 6,  "pack_color": "blue_silver",   "turnover_days": 12}
+      },
+      "avg_price_band": [20, 110],
+      "typical_shelf_value": 1400
+    },
+    "dairy": {
+      "items": {
+        "milk_500ml":       {"avg_price": 28,  "avg_units_per_face": 8,  "pack_color": "white_blue",    "turnover_days": 1},
+        "curd_400g":        {"avg_price": 35,  "avg_units_per_face": 6,  "pack_color": "white_cream",   "turnover_days": 2},
+        "butter_100g":      {"avg_price": 55,  "avg_units_per_face": 6,  "pack_color": "yellow_blue",   "turnover_days": 5}
+      },
+      "avg_price_band": [28, 55],
+      "typical_shelf_value": 600
+    },
+    "loose_goods": {
+      "items": {
+        "peanuts_kg":       {"avg_price": 120, "avg_units_per_face": 2,  "pack_color": "brown_tan",     "turnover_days": 20},
+        "namkeen_kg":       {"avg_price": 200, "avg_units_per_face": 2,  "pack_color": "yellow_brown",  "turnover_days": 15},
+        "dry_fruit_kg":     {"avg_price": 800, "avg_units_per_face": 1,  "pack_color": "brown_red",     "turnover_days": 30},
+        "spices_100g":      {"avg_price": 40,  "avg_units_per_face": 6,  "pack_color": "red_yellow",    "turnover_days": 25}
+      },
+      "avg_price_band": [40, 800],
+      "typical_shelf_value": 3500
+    }
+  }
+}

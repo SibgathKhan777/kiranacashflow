@@ -54,7 +54,13 @@ class VisionFeatures(BaseModel):
     ]
     shelf_density_index: float  # 0..1
     sku_diversity: float        # 0..1
-    inventory_value_est: float  # INR
+    inventory_value_est: float  # INR (visibility-corrected total)
+    inventory_visible_value: float = 0.0  # INR (what's directly visible)
+    inventory_cells_detected: int = 0     # product faces detected
+    inventory_detection_confidence: float = 0.0
+    fast_moving_fraction: float = 0.0    # turnover ≤ 7 days fraction of value
+    slow_moving_fraction: float = 0.0    # turnover > 21 days fraction of value
+    avg_inventory_turnover_days: float = 18.0
     refill_signal: float        # 0..1 (higher = more "real demand" evidence)
     store_size_sqft: float
     pos_sophistication: float   # 0..1
