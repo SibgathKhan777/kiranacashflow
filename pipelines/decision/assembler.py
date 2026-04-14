@@ -13,6 +13,8 @@ from api.schemas import (
     UnderwriteResponse,
     VisionFeatures,
 )
+from pipelines.lending.loan_sizer import size_loan
+from pipelines.lending.peer_benchmark import benchmark
 
 
 SEVERITY_PENALTY = {"low": 0.05, "medium": 0.15, "high": 0.40}
@@ -62,25 +64,59 @@ def assemble_decision(
     conf = _confidence(vision, estimate, flags)
     rec = _recommendation(conf, flags)
 
-    return UnderwriteResponse(
+    response = UnderwriteResponse(
         daily_sales_range=estimate.daily_sales_range,
         monthly_revenue_range=estimate.monthly_revenue_range,
         monthly_income_range=estimate.monthly_income_range,
         confidence_score=conf,
         risk_flags=[f.code for f in flags],
         recommendation=rec,  # type: ignore[arg-type]
-        explainability={
-            "shop_type": vision.shop_type,
-            "tier": geo.tier,
-            "top_drivers": _top_drivers(vision, geo),
-            "structural_point_estimate": estimate.structural_point_estimate,
-            "model_point_estimate": estimate.model_point_estimate,
-            "prior_disagreement": estimate.prior_disagreement,
-            "flag_details": [
-                {"code": f.code, "severity": f.severity, "message": f.message}
-                for f in flags
-            ],
-            "vision_features": vision.model_dump(),
-            "geo_features": geo.model_dump(),
-        },
+        explainability={},
     )
+
+    loan = size_loan(response, estimate)
+    peer = benchmark(vision, geo, estimate)
+
+    response.explainability = {
+        "shop_type": vision.shop_type,
+        "tier": geo.tier,
+        "top_drivers": _top_drivers(vision, geo),
+        "structural_point_estimate": estimate.structural_point_estimate,
+        "model_point_estimate": estimate.model_point_estimate,
+        "prior_disagreement": estimate.prior_disagreement,
+        "flag_details": [
+            {"code": f.code, "severity": f.severity, "message": f.message}
+            for f in flags
+        ],
+        "vision_features": vision.model_dump(),
+        "geo_features": geo.model_dump(),
+        "loan_sizing": {
+            "eligible": loan.eligible,
+            "recommended_loan": loan.recommended_loan,
+            "max_eligible_loan": loan.max_eligible_loan,
+            "confidence_haircut": loan.confidence_haircut,
+            "foir_ceiling": loan.foir_ceiling,
+            "risk_adjustment": loan.risk_adjustment,
+            "ineligible_reason": loan.ineligible_reason,
+            "emi_options": [
+                {
+                    "tenure_months": e.tenure_months,
+                    "emi_amount": e.emi_amount,
+                    "total_repayment": e.total_repayment,
+                    "foir": e.foir,
+                }
+                for e in loan.emi_options
+            ],
+        },
+        "peer_benchmark": {
+            "peer_cohort": peer.peer_cohort,
+            "percentile": peer.percentile,
+            "cohort_median_daily": peer.cohort_median_daily,
+            "cohort_p25_daily": peer.cohort_p25_daily,
+            "cohort_p75_daily": peer.cohort_p75_daily,
+            "this_shop_daily": peer.this_shop_daily,
+            "interpretation": peer.interpretation,
+        },
+    }
+
+    return response

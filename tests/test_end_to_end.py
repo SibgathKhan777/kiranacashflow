@@ -8,10 +8,14 @@ import pytest
 from fastapi.testclient import TestClient
 from PIL import Image
 
+from api.database import init_db
 from api.main import app
 
-
-client = TestClient(app)
+# Use context manager so startup event fires and DB tables are created.
+@pytest.fixture(scope="module")
+def client():
+    with TestClient(app) as c:
+        yield c
 
 
 def _png_bytes(seed: int) -> bytes:
@@ -25,13 +29,13 @@ def _png_bytes(seed: int) -> bytes:
     return buf.getvalue()
 
 
-def test_health():
+def test_health(client):
     r = client.get("/health")
     assert r.status_code == 200
     assert r.json()["status"] == "ok"
 
 
-def test_underwrite_roundtrip():
+def test_underwrite_roundtrip(client):
     files = [
         ("images", ("a.png", _png_bytes(1), "image/png")),
         ("images", ("b.png", _png_bytes(2), "image/png")),
@@ -41,7 +45,6 @@ def test_underwrite_roundtrip():
     r = client.post("/underwrite", files=files, data=data)
     assert r.status_code == 200, r.text
     body = r.json()
-    # Required fields present.
     for key in (
         "daily_sales_range",
         "monthly_revenue_range",
@@ -52,16 +55,25 @@ def test_underwrite_roundtrip():
         "explainability",
     ):
         assert key in body
-    # Ranges ordered.
     assert body["daily_sales_range"][0] <= body["daily_sales_range"][1]
     assert body["recommendation"] in {
         "approve_for_underwriting",
         "needs_verification",
         "reject_or_field_visit",
     }
+    # DB was written — history endpoint should return ≥1 record
+    h = client.get("/history")
+    assert h.status_code == 200
+    assert len(h.json()) >= 1
 
 
-def test_underwrite_rejects_no_images():
+def test_stats(client):
+    s = client.get("/stats")
+    assert s.status_code == 200
+    body = s.json()
+    assert "total" in body and "approved" in body
+
+
+def test_underwrite_rejects_no_images(client):
     r = client.post("/underwrite", data={"lat": "19.07", "lng": "72.87"})
-    # FastAPI returns 422 when the required File field is missing.
     assert r.status_code in (400, 422)
